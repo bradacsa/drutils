@@ -33,9 +33,11 @@ namespace drLog
           // Check if path is a directory and reducing it if it is
           if(!std::filesystem::is_directory(_logPath)) _filePath = _filePath.parent_path();
           // Check if the filepath exists
-          if (!std::filesystem::exists(_logPath)) {
+          if (!std::filesystem::exists(_logPath))
+          {
             // Trying to create the path
-            if (!std::filesystem::create_directories(_logPath)) {
+            if (!std::filesystem::create_directories(_logPath))
+            {
               std::cerr << "!!!--> Failed to create log directory structure: " << _logPath << " <--!!!\n";
               std::runtime_error("Failed to create log directory structure!");
             }
@@ -45,7 +47,11 @@ namespace drLog
          * @brief Destroys the FileChannel object.
          * 
          */
-        ~FileChannel() = default;
+        ~FileChannel()
+        {
+          // If file is open, we close it
+          if(_file.is_open()) _file.close();
+        }
 
       // Functions ----
         /**
@@ -73,30 +79,32 @@ namespace drLog
               // Set the new filePath
               _filePath = newFilePath;
               // Create the new filepath
-              if (!std::filesystem::exists(_filePath.parent_path())) {
-                if (!std::filesystem::create_directories(_filePath.parent_path())) {
+              if (!std::filesystem::exists(_filePath.parent_path()))
+              {
+                if (!std::filesystem::create_directories(_filePath.parent_path()))
+                {
                   std::cerr << "!!!--> Failed to create today's log directory structure: " << _filePath.parent_path() << " <--!!!\n";
                   std::runtime_error("Failed to create today's log directory structure!");
                   return false;
                 }
               }
+              // Close file if needed
+              if(_file.is_open()) _file.close();
               // Trying to create file (and create if it does not exists)
-              std::fstream oFile(_filePath, std::ios::out | std::ios::app);
+              _file.open(_filePath, std::ios::out | std::ios::app);
               // Check if file is okay (created)
-              if(!oFile)
+              if(!_file)
               {
                 // Nope
                 std::cerr << "!!!--> Failed to create today's log file: " << _filePath << " <--!!!\n";
                 std::runtime_error("Failed to create today's log file!");
                 return false;
               }
-              // Close it
-              oFile.close();
             }
             // Trying to open file
-            std::fstream oFile(_filePath,std::ios::out | std::ios::app);
+            if(!_file.is_open()) _file.open(_filePath,std::ios::out | std::ios::app);
             // Check if we could open it
-            if(!oFile.is_open())
+            if(!_file.is_open())
             {
               // Nope
               std::cerr << "!!!--> Failed to open today's log file: " << _filePath << " <--!!!\n";
@@ -104,13 +112,11 @@ namespace drLog
               return false;
             }
             // At the end we will write the log
-            oFile <<
+            _file <<
               "[" << Utils::DateTime::getTimeTInStr(dateTime, p_DTFormat) + "] - " <<     // TimeStamp
               "[" << getMsgTypeStr(type) << "] " <<                                       // Type
               "<" << className << "> => " <<                                              // Sender
               message << "\n";                                                            // Message
-            // Close file
-            oFile.close();
           }
           return true;
         }
@@ -119,6 +125,7 @@ namespace drLog
       // Variables ----
         std::filesystem::path       _logPath;             // Path for the log files.
         std::filesystem::path       _filePath;            // Filepath of the last log file.
+        std::fstream                _file;                // A stream for the file.
   };
 }
 
