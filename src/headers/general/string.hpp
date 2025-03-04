@@ -24,23 +24,6 @@ namespace Utils
   namespace String
   {
     /**
-     * @brief Simple string comparesion.
-     * 
-     * @param s1 First string.
-     * @param s2 Second string.
-     * @return int 0 if the two strings are the same, else
-     */
-    static int compare(const char *s1, const char *s2)
-    {
-      // Cast the two strings to unsigned char ptrs
-      const unsigned char* p1 = (const unsigned char*)s1;
-      const unsigned char* p2 = (const unsigned char*)s2;
-      // Check if the individual characters are the same
-      while (*p1 && *p1 == *p2) ++p1, ++p2;
-      // Return with the index of the difference
-      return (*p1>*p2)-(*p2>*p1);
-    }
-    /**
      * @brief Splits strings into pieces.
      * 
      * @param text The text we want to split.

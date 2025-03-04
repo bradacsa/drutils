@@ -4,8 +4,9 @@
 In this project I want to collect all the little C++ things that I made for myself but thought would be useful for others.
 
 ## List of goodies
-- String functions (join, split, compare)
+- String functions (join, split)
 - DateTime functions (datetime to string, current time to string timestamps)
+- WaitUntil
 - Sizes (KB, MB, GB, TB calculation and string conversion)
 - Threadpool implementation
 - Log implementation
